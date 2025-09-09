@@ -1,0 +1,134 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android' version '1.8.22'
+}
+
+android {
+    namespace 'co.za.letsibogo.potholefinder'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId "co.za.letsibogo.potholefinder"
+        minSdk 24
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+        multiDexEnabled true
+
+        ndk {
+            //noinspection ChromeOsAbiSupport
+            abiFilters "arm64-v8a"
+        }
+
+    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+}
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    packagingOptions {
+        // Merge your jniLibs and resources excludes into one block
+        excludes += [
+                'META-INF/**',
+                'dji/thirdparty/okhttp3/internal/publicsuffix/publicsuffixes.gz'
+        ]
+
+        // Add pickFirst for DJI native libraries
+        pickFirst 'lib/arm64-v8a/libc++_shared.so'
+        pickFirst 'lib/armeabi-v7a/libc++_shared.so'
+        pickFirst 'lib/**/libsecneo.so'
+        pickFirst 'lib/**/libstlport_shared.so'
+        pickFirst 'lib/**/libdjivideo.so'
+        pickFirst 'lib/**/libSDKRelativeJNI.so'
+        pickFirst 'lib/**/libFlyForbid.so'
+
+        // Additional exclusions for DJI
+        exclude 'META-INF/proguard/okhttp3.pro'
+        exclude 'META-INF/rxjava.properties'
+    }
+
+    // MSDK related so library
+    packagingOptions {
+        doNotStrip "*/*/libconstants.so"
+        doNotStrip "*/*/libdji_innertools.so"
+        doNotStrip "*/*/libdjibase.so"
+        doNotStrip "*/*/libDJICSDKCommon.so"
+        doNotStrip "*/*/libDJIFlySafeCore-CSDK.so"
+        doNotStrip "*/*/libdjifs_jni-CSDK.so"
+        doNotStrip "*/*/libDJIRegister.so"
+        doNotStrip "*/*/libdjisdk_jni.so"
+        doNotStrip "*/*/libDJIUpgradeCore.so"
+        doNotStrip "*/*/libDJIUpgradeJNI.so"
+        doNotStrip "*/*/libDJIWaypointV2Core-CSDK.so"
+        doNotStrip "*/*/libdjiwpv2-CSDK.so"
+        doNotStrip "*/*/libFlightRecordEngine.so"
+        doNotStrip "*/*/libvideo-framing.so"
+        doNotStrip "*/*/libwaes.so"
+        doNotStrip "*/*/libagora-rtsa-sdk.so"
+        doNotStrip "*/*/libc++.so"
+        doNotStrip "*/*/libc++_shared.so"
+        doNotStrip "*/*/libmrtc_28181.so"
+        doNotStrip "*/*/libmrtc_agora.so"
+        doNotStrip "*/*/libmrtc_core.so"
+        doNotStrip "*/*/libmrtc_core_jni.so"
+        doNotStrip "*/*/libmrtc_data.so"
+        doNotStrip "*/*/libmrtc_log.so"
+        doNotStrip "*/*/libmrtc_onvif.so"
+        doNotStrip "*/*/libmrtc_rtmp.so"
+        doNotStrip "*/*/libmrtc_rtsp.so"
+    }
+
+
+    buildToolsVersion '35.0.0'
+}
+
+dependencies {
+    implementation libs.appcompat
+    implementation libs.material.v1110
+
+    testImplementation libs.junit
+    androidTestImplementation libs.junit.v115
+    androidTestImplementation libs.espresso.core.v351
+
+    // Core Aircraft SDK
+    implementation "com.dji:dji-sdk-v5-aircraft:5.15.0"
+    compileOnly "com.dji:dji-sdk-v5-aircraft-provided:5.15.0"
+
+    // Network implementation (needed for communication)
+    implementation "com.dji:dji-sdk-v5-networkImp:5.15.0"
+    // Required for DJI SDK v5 (it uses Kotlin internally)
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.22"
+
+    // Ensure these versions are compatible with DJI SDK
+    implementation libs.okhttp // Should be ~4.9.3
+    implementation libs.rxandroid // Should be ~2.1.1
+    implementation libs.disklrucache // Should be ~2.0.2
+
+    implementation libs.multidex
+
+    // TensorFlow Lite - ensure versions are compatible
+    implementation(libs.tensorflow.lite) {
+        exclude group: 'org.tensorflow', module: 'tensorflow-lite-api'
+        exclude group: 'com.google.ai.edge.litert', module: 'litert-api'
+    }
+    implementation(libs.tensorflow.lite.support) {
+        exclude group: 'org.tensorflow', module: 'tensorflow-lite-api'
+        exclude group: 'com.google.ai.edge.litert', module: 'litert-api'
+    }
+    // Make sure this matches tensorflow-lite version
+    implementation libs.tensorflow.lite.api
+
+    // Google maps
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
+}
