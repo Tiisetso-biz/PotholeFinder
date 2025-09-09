@@ -52,11 +52,11 @@
         <!-- DJI API Key -->
         <meta-data
             android:name="com.dji.sdk.API_KEY"
-            android:value="cac318db73ffd6d64d3a1825" />
+            android:value="${DJI_API_KEY}" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyC0EVQ59kt2iYd8fwiYMoRhzBkoWYQJaic"/>
+            android:value="${GOOGLE_MAPS_API_KEY}"/>
 
     </application>
 </manifest>

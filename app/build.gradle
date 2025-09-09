@@ -3,6 +3,10 @@ plugins {
     id 'org.jetbrains.kotlin.android' version '1.8.22'
 }
 
+def djiApiKey = project.hasProperty("DJI_API_KEY") ? project.DJI_API_KEY : ""
+def mapsApiKey = project.hasProperty("GOOGLE_MAPS_API_KEY") ? project.GOOGLE_MAPS_API_KEY : ""
+
+
 android {
     namespace 'co.za.letsibogo.potholefinder'
     compileSdk 36
@@ -21,8 +25,13 @@ android {
             abiFilters "arm64-v8a"
         }
 
-    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-}
+        manifestPlaceholders = [
+                DJI_API_KEY     : djiApiKey,
+                GOOGLE_MAPS_API_KEY : mapsApiKey
+        ]
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
 
     buildTypes {
         release {
